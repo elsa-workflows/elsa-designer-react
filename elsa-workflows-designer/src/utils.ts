@@ -1,19 +1,12 @@
-﻿import {Workflow} from "./models";
-
-export type Lookup = {
-    [key: string]: any
-};
-
-export function distinct<T>(list: Array<T>) {
-    return Array.from(new Set(list));
-}
+﻿import "./extensions";
+import {Workflow} from "./models";
 
 export function getChildActivities(workflow: Workflow, parentId?: string) {
-    if (parentId == null) {
-        const targetIds: Lookup = distinct(workflow.connections.map(x => x.targetId)).reduce((previous, current) => ({[current]: current}), {})
+    if (!parentId) {
+        const targetIds = workflow.connections.map(x => x.targetId).distinct().toLookup(x => x);
         return workflow.activities.filter(x => targetIds[x.activityId] === undefined);
     } else {
-        const targetIds: Lookup = distinct(workflow.connections.filter(x => x.sourceId === parentId).map(x => x.targetId)).reduce((previous, current) => ({[current]: current}), {});
+        const targetIds = workflow.connections.filter(x => x.sourceId === parentId).map(x => x.targetId).distinct().toLookup(x => x);
         return workflow.activities.filter(x => targetIds[x.activityId] !== undefined);
     }
 }

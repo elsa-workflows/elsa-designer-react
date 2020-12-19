@@ -12,6 +12,6 @@ export interface Activity {
 
 export interface Connection{
     sourceId: string
-    targetId: string
+    targetId?: string
     outcome: string
 }
